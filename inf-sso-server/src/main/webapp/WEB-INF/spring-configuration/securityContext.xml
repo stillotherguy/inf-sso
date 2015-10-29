@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Licensed to Apereo under one or more contributor license agreements. 
+	See the NOTICE file distributed with this work for additional information 
+	regarding copyright ownership. Apereo licenses this file to you under the 
+	Apache License, Version 2.0 (the "License"); you may not use this file except 
+	in compliance with the License. You may obtain a copy of the License at the 
+	following location: http://www.apache.org/licenses/LICENSE-2.0 Unless required 
+	by applicable law or agreed to in writing, software distributed under the 
+	License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS 
+	OF ANY KIND, either express or implied. See the License for the specific 
+	language governing permissions and limitations under the License. -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:sec="http://www.springframework.org/schema/security"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
+
+	<description>
+		Security configuration for sensitive areas of CAS : status and statistics.
+	</description>
+
+	<!-- TODO 设置管理员 -->
+	<sec:authentication-manager>
+		<sec:authentication-provider user-service-ref="userService"/>  
+	</sec:authentication-manager>
+	
+	<sec:user-service id="userService">
+		<sec:user name="admin" password="admin123" authorities="ROLE_ADMIN" />
+	</sec:user-service>
+
+	<sec:http pattern="/status/**" entry-point-ref="notAuthorizedEntryPoint"
+		use-expressions="true" auto-config="true">
+		<sec:intercept-url pattern="/status"
+			access="${cas.securityContext.status.access}" />
+	</sec:http>
+
+
+	<!--
+	管理接口
+	/statistics 总接口
+	/statistics/ping  Reports back pong to indicate that the CAS server is running.
+	/statistics/metrics?pretty=true  Reports back metrics and performance data. The optional pretty flag attempts to format the JSON output.
+	/statistics/threads  Reports back JVM thread info.
+	/statistics/healthcheck  Unused at this point, but may be used later to output health examinations of the CAS server’s internals, such as ticket registry, etc.
+	/statistics/ssosessions
+	 -->
+	<sec:http pattern="/statistics/**" entry-point-ref="notAuthorizedEntryPoint"
+		use-expressions="true" auto-config="true">
+		<sec:intercept-url pattern="/statistics/**"
+			access="${cas.securityContext.statistics.access}" />
+	</sec:http>
+
+	<bean id="notAuthorizedEntryPoint"
+		class="org.springframework.security.web.authentication.Http403ForbiddenEntryPoint" />
+</beans>

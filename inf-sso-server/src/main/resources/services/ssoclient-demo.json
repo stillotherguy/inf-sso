@@ -1,0 +1,11 @@
+{
+  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "serviceId" : "^http://ssoclient:8081/[^\\s]*$",
+  "name" : "ssoclient",
+  "description" : "SSO client demo",
+  "accessStrategy" : {
+    "@class" : "org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy",
+    "enabled" : true,
+    "ssoEnabled" : true
+  }
+}
